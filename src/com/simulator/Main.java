@@ -362,37 +362,25 @@ public class Main {
         System.out.println("======================================================================" + RESET);
         System.out.println("");
 
-        System.out.println("   " + BOLD + "Router-Lab" + RESET + " ────────────────── " + BOLD + "Router-Pusat" + RESET + " ───────────────── " + BOLD + "Router-ISP" + RESET + "");
-        System.out.println("       " + CYAN + "│" + RESET + "                           " + CYAN + "│" + RESET + "                          " + CYAN + "│" + RESET + "");
-        System.out.println("       " + CYAN + "│" + RESET + "                           " + CYAN + "│" + RESET + "                          " + CYAN + "│" + RESET + "");
-        System.out.println("       " + CYAN + "│" + RESET + "                           " + CYAN + "│" + RESET + "                          " + CYAN + "│" + RESET + "");
-        System.out.println("       " + CYAN + "│" + RESET + "                           " + CYAN + "│" + RESET + "                          " + CYAN + "│" + RESET + "");
-        System.out.println("   " + BOLD + "Router-GedungA" + RESET + " ──────────── " + BOLD + "Router-GedungB" + RESET + " ─────────────── " + BOLD + "Router-Server" + RESET + "");
+        // Baris 1-3: baris atas router + vertikal
+        System.out.println("   " + BOLD + "Router-Lab" + RESET + " ─────────────────── " + BOLD + "Router-Pusat" + RESET + " ─────────────────── " + BOLD + "Router-ISP" + RESET + "");
+        System.out.println("       " + CYAN + "│" + RESET + "                            " + CYAN + "│" + RESET + "                           " + CYAN + "│" + RESET + "");
+        System.out.println("       " + CYAN + "│" + RESET + "                            " + CYAN + "│" + RESET + "                           " + CYAN + "│" + RESET + "");
+        // Baris 4: Pusat ───┐ (belok kanan lalu turun ke Server)
+        System.out.println("       " + CYAN + "│" + RESET + "                            " + CYAN + "└───────────────────────────────" + CYAN + "┐" + RESET);
+        // Baris 5: │ vertikal lanjutan dari ┐, lurus di atas Router-Server
+        System.out.println("       " + CYAN + "│" + RESET + "                                                            " + CYAN + "│" + RESET + "");
+        // Baris 6: baris bawah router
+        System.out.println("   " + BOLD + "Router-GedungA" + RESET + " ───────────── " + BOLD + "Router-GedungB" + RESET + " ─────────────────── " + BOLD + "Router-Server" + RESET + "");
         System.out.println("");
 
         System.out.println(BOLD + "   Cara membaca diagram:" + RESET);
-        System.out.println("   ─── (horizontal) = router sebaris saling terhubung");
-        System.out.println("   │  (vertikal)   = router sekolom saling terhubung");
+        System.out.println("   ─── = koneksi horizontal (sebaris)");
+        System.out.println("   │  = koneksi vertikal (sekolom)");
+        System.out.println("   └─┐ = Pusat belok kanan, │ turun ke Server (lihat kolom 69)");
         System.out.println("");
 
-        System.out.println(BOLD + "   Daftar 8 koneksi:" + RESET);
-        System.out.println("   ┌──────┬──────────────────┬──────────────────────────┐");
-        System.out.println("   │ No   │ Koneksi          │ Jalur pada diagram       │");
-        System.out.println("   ├──────┼──────────────────┼──────────────────────────┤");
-        System.out.println("   │ 1    │ Lab ── Pusat     │ baris 1: Lab ─── Pusat   │");
-        System.out.println("   │ 2    │ Pusat ── ISP     │ baris 1: Pusat ─── ISP   │");
-        System.out.println("   │ 3    │ GedungA ── GedungB│ baris 2: GedungA ── GB  │");
-        System.out.println("   │ 4    │ GedungB ── Server│ baris 2: GedungB ── SRV  │");
-        System.out.println("   │ 5    │ Lab ── GedungA   │ kolom 1: │ (vertikal)    │");
-        System.out.println("   │ 6    │ GedungB ── Pusat │ kolom 2: │ (vertikal)    │");
-        System.out.println("   │ 7    │ Server ── ISP    │ kolom 3: │ (vertikal)    │");
-        System.out.println("   │ 8    │ Server ── Pusat  │ kolom 2&3: diagonal ───  │");
-        System.out.println("   └──────┴──────────────────┴──────────────────────────┘");
-        System.out.println("");
-        System.out.println(BOLD + "   Catatan:" + RESET);
-        System.out.println("   Koneksi nomor 8 (Server ── Pusat) adalah koneksi diagonal");
-        System.out.println("   dalam grid karena Pusat di kolom 2 dan Server di kolom 3.");
-        System.out.println("   Semua 8 koneksi sudah sesuai dengan daftar connectRouters().");
+        System.out.println(BOLD + "   Daftar 8 koneksi sesuai connectRouters():" + RESET);
         System.out.println("======================================================================");
         pressAnyKeyToContinue();
     }
