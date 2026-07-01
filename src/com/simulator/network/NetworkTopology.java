@@ -141,6 +141,89 @@ public class NetworkTopology {
     }
 
     /**
+     * Mencari jalur terpendek menggunakan algoritma BFS (Breadth-First Search).
+     * BFS menjamin jalur dengan jumlah lompatan (hops) paling sedikit pada
+     * graf tidak berbobot (unweighted graph). Menggunakan Queue untuk antrian
+     * penjelajahan dan Map untuk melacak router sebelumnya (parent) guna
+     * merekonstruksi jalur terpendek.
+     *
+     * @param source      Router asal pengiriman paket.
+     * @param destination Router tujuan akhir.
+     * @return CustomStack berisi urutan router yang dilalui (rute terpendek),
+     *         atau stack kosong jika tidak ada jalur.
+     */
+    public CustomStack<Router> findRouteBFS(Router source, Router destination) {
+        CustomStack<Router> pathStack = new CustomStack<>();
+        Set<Router> visited = new HashSet<>();
+        Queue<Router> queue = new LinkedList<>();
+        Map<Router, Router> parent = new HashMap<>();
+
+        System.out.println(BOLD + PURPLE + "\n[SIMULASI BFS] Memulai pencarian jalur terpendek..." + RESET);
+        System.out.println("Dari   : " + YELLOW + source.getName() + " (" + source.getIpAddress() + ")" + RESET);
+        System.out.println("Menuju : " + YELLOW + destination.getName() + " (" + destination.getIpAddress() + ")" + RESET);
+        System.out.println("======================================================================");
+
+        // Inisialisasi: masukkan source ke antrian
+        queue.add(source);
+        visited.add(source);
+        parent.put(source, null);
+        System.out.printf("📥 " + CYAN + "[ANTRIAN] Enqueue %-18s [%-13s] -> Masuk Antrian.\n" + RESET,
+                source.getName(), source.getIpAddress());
+
+        boolean found = false;
+
+        // Loop BFS: proses antrian sampai habis atau tujuan ditemukan
+        while (!queue.isEmpty()) {
+            Router current = queue.poll();
+            System.out.printf("📤 " + CYAN + "[PROSES] Dequeue  %-18s [%-13s] -> Diproses.\n" + RESET,
+                    current.getName(), current.getIpAddress());
+
+            if (current.equals(destination)) {
+                found = true;
+                break;
+            }
+
+            List<Router> neighbors = adjacencyList.get(current);
+            if (neighbors != null) {
+                for (Router neighbor : neighbors) {
+                    if (!visited.contains(neighbor)) {
+                        visited.add(neighbor);
+                        parent.put(neighbor, current);
+                        queue.add(neighbor);
+                        System.out.printf("📥 " + CYAN + "[ANTRIAN] Enqueue %-18s [%-13s] -> Masuk Antrian.\n" + RESET,
+                                neighbor.getName(), neighbor.getIpAddress());
+                    }
+                }
+            }
+        }
+
+        System.out.println("======================================================================");
+
+        if (found) {
+            // Rekonstruksi jalur terpendek dari tujuan ke sumber menggunakan parent map
+            List<Router> path = new ArrayList<>();
+            Router step = destination;
+            while (step != null) {
+                path.add(step);
+                step = parent.get(step);
+            }
+            Collections.reverse(path); // Balik agar urutan dari source ke destination
+
+            // Push setiap router ke CustomStack
+            for (Router r : path) {
+                pathStack.push(r);
+            }
+
+            System.out.println(BOLD + GREEN + "🎉 [SUKSES] BFS menemukan jalur terpendek! (" + (path.size() - 1) + " hops)" + RESET);
+            return pathStack;
+        } else {
+            System.out.println(BOLD + RED + "❌ [GAGAL] BFS: Tidak ada jalur dari "
+                    + source.getName() + " ke " + destination.getName() + "." + RESET);
+            return new CustomStack<>();
+        }
+    }
+
+    /**
      * Fungsi pembantu rekursif DFS (Depth-First Search) dengan logika backtracking.
      *
      * @param current     Router yang sedang dikunjungi saat ini.
