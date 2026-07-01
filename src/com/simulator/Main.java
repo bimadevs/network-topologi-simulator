@@ -4,6 +4,7 @@ import com.simulator.model.Router;
 import com.simulator.network.NetworkTopology;
 import com.simulator.datastructure.CustomStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -193,12 +194,44 @@ public class Main {
             return;
         }
 
-        // Jalankan pencarian rute DFS (mencetak log perjalanan secara real-time)
-        CustomStack<Router> pathStack = topology.findRoute(source, dest);
+        // Pilih algoritma routing
+        System.out.println("\n" + BOLD + "Pilih algoritma routing:" + RESET);
+        System.out.println("1. " + CYAN + "DFS" + RESET + " (Depth-First Search) - Pencarian mendalam");
+        System.out.println("2. " + CYAN + "BFS" + RESET + " (Breadth-First Search) - Jalur terpendek");
+        System.out.println("3. " + CYAN + "Bandingkan Keduanya" + RESET + " (DFS vs BFS)");
+        System.out.print(BOLD + "Pilihan (1/2/3): " + RESET);
+        String algoChoice = scanner.nextLine().trim();
 
-        // Jika rute ditemukan (Stack tidak kosong)
-        if (!pathStack.isEmpty()) {
-            displayTraceRouteResult(pathStack);
+        switch (algoChoice) {
+            case "2":
+                // BFS
+                CustomStack<Router> bfsPath = topology.findRouteBFS(source, dest);
+                if (!bfsPath.isEmpty()) {
+                    displayTraceRouteResult(bfsPath);
+                }
+                break;
+            case "3":
+                // Bandingkan DFS dan BFS
+                System.out.println("\n" + BOLD + BLUE + "═════════════ HASIL DFS ═════════════" + RESET);
+                CustomStack<Router> dfsResult = topology.findRoute(source, dest);
+                if (!dfsResult.isEmpty()) {
+                    displayTraceRouteResult(dfsResult);
+                }
+
+                System.out.println("\n" + BOLD + BLUE + "═════════════ HASIL BFS ═════════════" + RESET);
+                CustomStack<Router> bfsResult = topology.findRouteBFS(source, dest);
+                if (!bfsResult.isEmpty()) {
+                    displayTraceRouteResult(bfsResult);
+                }
+
+                printComparisonTable(dfsResult, bfsResult);
+                break;
+            default:
+                // Default: DFS (existing behaviour)
+                CustomStack<Router> pathStack = topology.findRoute(source, dest);
+                if (!pathStack.isEmpty()) {
+                    displayTraceRouteResult(pathStack);
+                }
         }
         pressAnyKeyToContinue();
     }
@@ -241,6 +274,72 @@ public class Main {
         System.out.println("Total Lompatan (Hops) : " + BOLD + hopsCount + RESET);
         System.out.println("Total Router Dilalui  : " + BOLD + routeList.size() + RESET);
         System.out.println("======================================================================\n");
+    }
+
+    /**
+     * Menampilkan tabel perbandingan hasil routing DFS vs BFS secara berdampingan.
+     *
+     * @param dfsPath Hasil rute dari algoritma DFS.
+     * @param bfsPath Hasil rute dari algoritma BFS.
+     */
+    private static void printComparisonTable(CustomStack<Router> dfsPath, CustomStack<Router> bfsPath) {
+        List<Router> dfsList = dfsPath.isEmpty() ? new ArrayList<>() : dfsPath.toList();
+        List<Router> bfsList = bfsPath.isEmpty() ? new ArrayList<>() : bfsPath.toList();
+
+        int dfsHops = dfsList.isEmpty() ? 0 : dfsList.size() - 1;
+        int bfsHops = bfsList.isEmpty() ? 0 : bfsList.size() - 1;
+
+        System.out.println("\n" + BOLD + BLUE + "======================================================================");
+        System.out.println("              📊 PERBANDINGAN ALGORITMA ROUTING");
+        System.out.println("======================================================================" + RESET);
+        System.out.printf(BOLD + " %-15s %-10s %-10s\n" + RESET, "Algoritma", "Hops", "Jalur");
+        System.out.println("----------------------------------------------------------------------");
+
+        // Baris DFS
+        System.out.printf(" %-15s ", "DFS");
+        System.out.printf("%-10s ", dfsList.isEmpty() ? "-" : dfsHops);
+        System.out.println(dfsList.isEmpty() ? RED + "Tidak ada jalur" + RESET : formatPathString(dfsList));
+
+        // Baris BFS
+        System.out.printf(" %-15s ", "BFS");
+        System.out.printf("%-10s ", bfsList.isEmpty() ? "-" : bfsHops);
+        System.out.println(bfsList.isEmpty() ? RED + "Tidak ada jalur" + RESET : formatPathString(bfsList));
+
+        System.out.println("----------------------------------------------------------------------");
+
+        // Tentukan pemenang
+        if (!dfsList.isEmpty() && !bfsList.isEmpty()) {
+            if (bfsHops < dfsHops) {
+                System.out.println(BOLD + GREEN + "🏆 BFS unggul " + (dfsHops - bfsHops)
+                        + " hop lebih pendek dari DFS!" + RESET);
+            } else if (dfsHops < bfsHops) {
+                System.out.println(BOLD + YELLOW + "🏆 DFS unggul " + (bfsHops - dfsHops)
+                        + " hop lebih pendek dari BFS!" + RESET);
+            } else {
+                System.out.println(BOLD + CYAN + "⚖️  Kedua algoritma menghasilkan jalur dengan panjang yang sama." + RESET);
+            }
+        } else if (!dfsList.isEmpty()) {
+            System.out.println(BOLD + YELLOW + "ℹ️ Hanya DFS yang berhasil menemukan jalur." + RESET);
+        } else if (!bfsList.isEmpty()) {
+            System.out.println(BOLD + GREEN + "ℹ️ Hanya BFS yang berhasil menemukan jalur." + RESET);
+        } else {
+            System.out.println(BOLD + RED + "❌ Kedua algoritma gagal menemukan jalur." + RESET);
+        }
+        System.out.println("======================================================================");
+    }
+
+    /**
+     * Memformat daftar router menjadi string panah (r1 -> r2 -> r3).
+     */
+    private static String formatPathString(List<Router> path) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < path.size(); i++) {
+            sb.append(CYAN).append(path.get(i).getName()).append(RESET);
+            if (i < path.size() - 1) {
+                sb.append(" " + YELLOW + "→" + RESET + " ");
+            }
+        }
+        return sb.toString();
     }
 
     /**
