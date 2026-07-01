@@ -358,27 +358,48 @@ public class Main {
      */
     private static void displayTopologyDiagram() {
         System.out.println("\n" + BOLD + "======================================================================");
-        System.out.println("                 🖼️  DIAGRAM SKEMA TOPOLOGI JARINGAN (ASCII)");
+        System.out.println("              🖼️  DIAGRAM SKEMA TOPOLOGI JARINGAN");
         System.out.println("======================================================================" + RESET);
         System.out.println("");
-        System.out.println("                " + CYAN + "[Router-Lab] (192.168.1.1)" + RESET);
-        System.out.println("                  /                    \\");
-        System.out.println("                 /                      \\");
-        System.out.println("     " + CYAN + "[Router-GedungA]" + RESET + "                  " + CYAN + "[Router-Pusat] (10.0.0.1)" + RESET);
-        System.out.println("       (172.16.1.1)                     /      |      \\");
-        System.out.println("            |                          /       |       \\");
-        System.out.println("     " + CYAN + "[Router-GedungB]" + RESET + "                  /   " + CYAN + "[Router-ISP]" + RESET + "    \\");
-        System.out.println("       (172.16.2.1)                 /   (200.10.10.1)  \\");
-        System.out.println("            \\                      /           |        \\");
-        System.out.println("             \\                    /            |         \\");
-        System.out.println("              " + CYAN + "[Router-Server] (10.0.2.1) <-------------┘" + RESET);
+
+        System.out.println("                     " + CYAN + "┌──────────────────┐" + RESET);
+        System.out.println("                     " + CYAN + "│" + RESET + "  " + BOLD + "ROUTER-PUSAT" + RESET + CYAN + "     │" + RESET);
+        System.out.println("                     " + CYAN + "│" + RESET + "    " + YELLOW + "10.0.0.1" + RESET + CYAN + "      │" + RESET);
+        System.out.println("                     " + CYAN + "└──┬──┬──┬──┬────┘" + RESET);
+        System.out.println("                        │  │  │  │");
+        System.out.println("      ┌─────────────────┘  │  │  └──────────────┐");
+        System.out.println("      │                    │  │                 │");
+        System.out.println(" " + CYAN + "┌──────────────┐" + RESET + "     " + CYAN + "┌──────────────┐" + RESET + "   │  " + CYAN + "┌──────────────┐" + RESET);
+        System.out.println(" " + CYAN + "│" + RESET + " Router-Lab   " + CYAN + "│" + RESET + "     " + CYAN + "│" + RESET + " Router-     " + CYAN + "│" + RESET + "   │  " + CYAN + "│" + RESET + " Router-ISP  " + CYAN + "│" + RESET);
+        System.out.println(" " + CYAN + "│" + RESET + " 192.168.1.1  " + CYAN + "│" + RESET + "     " + CYAN + "│" + RESET + " GedungB    " + CYAN + "│" + RESET + "   │  " + CYAN + "│" + RESET + " 200.10.10.1" + CYAN + "│" + RESET);
+        System.out.println(" " + CYAN + "└──────┬───────┘" + RESET + "     " + CYAN + "│" + RESET + " 172.16.2.1 " + CYAN + "│" + RESET + "   │  " + CYAN + "└──────┬───────┘" + RESET);
+        System.out.println("        │                " + CYAN + "└──────┬───────┘" + RESET + "   │         │");
+        System.out.println(" " + CYAN + "┌──────┴───────┐" + RESET + "          │              │         │");
+        System.out.println(" " + CYAN + "│" + RESET + " Router-     " + CYAN + "│" + RESET + "          │              │         │");
+        System.out.println(" " + CYAN + "│" + RESET + " GedungA     " + CYAN + "│" + RESET + "     " + CYAN + "┌────┴──────────────┴──┬──────┘" + RESET);
+        System.out.println(" " + CYAN + "│" + RESET + " 172.16.1.1  " + CYAN + "│" + RESET + "     " + CYAN + "│" + RESET + "     ROUTER-SERVER    " + CYAN + "│" + RESET);
+        System.out.println(" " + CYAN + "└──────────────┘" + RESET + "     " + CYAN + "│" + RESET + "       10.0.2.1       " + CYAN + "│" + RESET);
+        System.out.println("                     " + CYAN + "└──────────────────────┘" + RESET);
         System.out.println("");
+
         System.out.println("----------------------------------------------------------------------");
-        System.out.println("Keterangan:");
-        System.out.println("- Garis mewakili kabel jaringan bertipe duplex penuh (Undirected/Timbal-Balik).");
-        System.out.println("- Router-Lab dan Router-Server memiliki beberapa rute redundan.");
-        System.out.println("- Algoritma DFS akan mencari jalur secara mendalam ke tetangga pertama,");
-        System.out.println("  dan melakukan " + RED + "Backtracking" + RESET + " jika menghadapi jalan buntu (dead-end).");
+        System.out.println(BOLD + "Keterangan:" + RESET);
+        System.out.println("  ┌──────────────┐  = Perangkat Router");
+        System.out.println("  │ " + YELLOW + "xxx.xxx.x.x" + RESET + "  │  = Alamat IP");
+        System.out.println("  └──────────────┘");
+        System.out.println("  │ ─ ┤ ├        = Kabel koneksi (timbal-balik / undirected)");
+        System.out.println("");
+        System.out.println(BOLD + "Ringkasan Koneksi:" + RESET);
+        System.out.println("  " + CYAN + "Router-Pusat" + RESET + "  ───  Lab, GedungB, Server, ISP");
+        System.out.println("  " + CYAN + "Router-Server" + RESET + " ───  GedungB, Pusat, ISP");
+        System.out.println("  " + CYAN + "Router-Lab" + RESET + "    ───  GedungA, Pusat");
+        System.out.println("  " + CYAN + "Router-GedungA" + RESET + " ───  Lab, GedungB");
+        System.out.println("  " + CYAN + "Router-GedungB" + RESET + " ───  GedungA, Pusat, Server");
+        System.out.println("  " + CYAN + "Router-ISP" + RESET + "    ───  Pusat, Server");
+        System.out.println("");
+        System.out.println(BOLD + "Algoritma Routing:" + RESET);
+        System.out.println("  DFS: eksplorasi mendalam + backtracking (Stack)");
+        System.out.println("  BFS: eksplorasi melebar — jamin jalur terpendek (Queue)");
         System.out.println("======================================================================");
         pressAnyKeyToContinue();
     }
